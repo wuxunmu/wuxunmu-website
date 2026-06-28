@@ -10,3 +10,5 @@ Mobile works metadata layout fix 2026-06-28
 Compact mobile writing book layout 2026-06-28
 
 Mobile English artwork title compact fix 2026-06-28
+
+Extra compact mobile English artwork title 2026-06-28

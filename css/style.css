@@ -640,3 +640,23 @@ body.zh .publication-section h3{font-family:"Noto Sans SC","Helvetica Neue",Aria
     line-height: 1.65;
   }
 }
+
+/* 2026-06-28 Extra compact mobile English artwork title: align closer to exhibition text scale */
+@media (max-width: 640px){
+  body:not(.zh) .work-info{
+    grid-template-columns: 56px minmax(0, 1fr);
+    column-gap: 14px;
+    row-gap: 8px;
+  }
+  body:not(.zh) .work-info h2{
+    font-size: clamp(17px, 5vw, 20px) !important;
+    line-height: 1.28 !important;
+    letter-spacing: .01em !important;
+    font-weight: 400;
+    max-width: 100%;
+  }
+  body:not(.zh) .work-meta{
+    font-size: 14px;
+    line-height: 1.55;
+  }
+}
