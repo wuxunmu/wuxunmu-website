@@ -8,3 +8,5 @@ Studio image path mixed-case fix 2026-06-28.
 Mobile works metadata layout fix 2026-06-28
 
 Compact mobile writing book layout 2026-06-28
+
+Mobile English artwork title compact fix 2026-06-28

@@ -621,3 +621,22 @@ body.zh .publication-section h3{font-family:"Noto Sans SC","Helvetica Neue",Aria
   .chapter-row .chapter-title{font-size:17px;}
   body.zh .chapter-row .chapter-title{font-size:19px;}
 }
+
+/* 2026-06-28 Mobile English artwork title refinement: keep selected-work names close to metadata size */
+@media (max-width: 640px){
+  body:not(.zh) .work-info{
+    grid-template-columns: 56px 1fr;
+    column-gap: 16px;
+    row-gap: 10px;
+  }
+  body:not(.zh) .work-info h2{
+    font-size: clamp(22px, 6.8vw, 28px);
+    line-height: 1.18;
+    letter-spacing: .015em;
+    max-width: 100%;
+  }
+  body:not(.zh) .work-meta{
+    font-size: 14px;
+    line-height: 1.65;
+  }
+}
