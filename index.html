@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Home | XUNMU WU</title><script>
+    (function () {
+      var savedLang = localStorage.getItem('aether_lang');
+      var browserLangs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || navigator.userLanguage || ''])
+        .filter(Boolean)
+        .map(function (lang) { return String(lang).toLowerCase(); });
+      var detectedLang = browserLangs.some(function (lang) { return lang.indexOf('zh') === 0; }) ? 'zh' : 'en';
+      var lang = savedLang || detectedLang;
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.documentElement.classList.add('prelang-' + lang);
+    })();
+  </script><link rel="stylesheet" href="css/style.css"></head><body><header class="site-header"><a class="brand" href="index.html" data-i18n="brand">XUNMU WU</a><nav><a data-i18n="nav_artist" href="artist.html">The Artist</a><a data-i18n="nav_artworks" href="artworks.html">Artworks</a><a data-i18n="nav_exhibitions" href="exhibitions.html">Exhibitions</a><a data-i18n="nav_studio" href="studio.html">Studio</a><a data-i18n="nav_texts" href="texts.html">Texts</a><a data-i18n="nav_contact" href="contact.html">Contact</a></nav><button class="lang-toggle" id="langToggle">ZH</button></header><main><section class="home-hero"><div class="home-inner"><h1 data-content="artist.name">XUNMU WU</h1><p class="home-line" data-content="artist.tagline"></p></div></section></main><footer class="site-footer"><div class="copyright">© 2026 Xunmu Wu. All Rights Reserved.</div></footer><script src="js/app.js"></script></body></html>

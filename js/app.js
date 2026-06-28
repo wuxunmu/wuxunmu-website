@@ -1,0 +1,508 @@
+const I18N = {
+  en: {
+    brand: 'XUNMU WU', digital_archive: 'Digital Archive', footer_archive: 'XUNMU WU DIGITAL ARCHIVE',
+    nav_home: 'Home', nav_artist: 'The Artist', nav_artworks: 'Artworks', nav_writing: 'Writing', nav_exhibitions: 'Exhibitions', nav_studio: 'Studio', nav_texts: 'Literature', nav_contact: 'Contact',
+    footer_note: 'A growing archive of painting, writing and thought.',
+    enter_archive: 'Art Archive', journey_soon: 'Curated Journey · Coming Soon',
+    artist_title: 'The Artist', exhibitions_title: 'Exhibitions', exhibitions_lead: '',
+    solo: 'Solo Exhibitions', group: 'Group Exhibitions', fair: 'Art Fairs', complete_cv: 'Complete CV', complete_cv_note: 'Complete exhibition history, awards and art fair records will be available in the downloadable CV.', download_cv_soon: 'Download Complete CV · Coming Soon', read_full_statement: 'Read Full Statement →', back_to_artist: 'Back to The Artist →',
+    texts_title: 'Literature', texts_lead: '', back_to_texts: 'Back to Literature →', writing_title: 'Writing', read_full_text: 'Read Full Text →', back_to_writing: 'Back to Writing →', contents: 'Contents', previous_chapter: 'Previous Chapter', next_chapter: 'Next Chapter', back_to_contents: 'Back to Contents', read: 'Read →',
+    artworks_title: 'Artworks', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: 'Selected Works', selected_works_lead: '',
+    contact_title: 'Contact', studio_title: 'Studio', biography: 'Biography', timeline: 'Timeline', cv: 'CV', artist_statement: 'Artist Statement'
+  },
+  zh: {
+    brand: '吴训木', digital_archive: '数字档案', footer_archive: '吴训木数字档案',
+    nav_home: '首页', nav_artist: '艺术家', nav_artworks: '作品', nav_writing: '写作', nav_exhibitions: '展览', nav_studio: '创作现场', nav_texts: '文献', nav_contact: '联系',
+    footer_note: '一个持续生长的绘画、文字与思想档案。',
+    enter_archive: '艺术档案', journey_soon: '策展之旅 · 即将推出',
+    artist_title: '艺术家', exhibitions_title: '展览', exhibitions_lead: '',
+    solo: '个展', group: '群展', fair: '艺术博览会', complete_cv: '完整艺术履历', complete_cv_note: '完整展览履历、获奖与艺博会记录将收录于可下载的完整 CV。', download_cv_soon: '下载完整履历 · 即将提供', read_full_statement: '阅读全文 →', back_to_artist: '返回艺术家 →',
+    texts_title: '文献', texts_lead: '', back_to_texts: '返回文献 →', writing_title: '写作', read_full_text: '阅读全文 →', back_to_writing: '返回写作 →', contents: '目录', previous_chapter: '上一章', next_chapter: '下一章', back_to_contents: '返回目录', read: '阅读 →',
+    artworks_title: '作品', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: '代表作品', selected_works_lead: '',
+    contact_title: '联系', studio_title: '创作现场', biography: '简介', timeline: '时间轴', cv: '完整艺术履历', artist_statement: '艺术家自述'
+  }
+};
+
+let DATA = {};
+
+const LANG_STORAGE_KEY = 'aether_lang';
+
+function detectBrowserLang() {
+  const browserLangs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || navigator.userLanguage || ''])
+    .filter(Boolean)
+    .map(lang => String(lang).toLowerCase());
+
+  return browserLangs.some(lang => lang.startsWith('zh')) ? 'zh' : 'en';
+}
+
+function getLang() {
+  return localStorage.getItem(LANG_STORAGE_KEY) || detectBrowserLang();
+}
+
+function pick(obj, lang) {
+  if (!obj) return '';
+  if (typeof obj === 'string') return obj;
+  return obj[lang] || obj.en || obj.zh || '';
+}
+
+function paragraphs(text) {
+  return (text || '')
+    .split(/\n\s*\n/)
+    .filter(Boolean)
+    .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+    .join('');
+}
+
+async function loadJSON(path) {
+  try {
+    const r = await fetch(path);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch (e) {
+    console.warn('Could not load', path, e);
+    return null;
+  }
+}
+
+async function init() {
+  DATA.artist = await loadJSON('data/artist.json');
+  DATA.exhibitions = await loadJSON('data/exhibitions.json');
+  DATA.exhibitionPhotos = await loadJSON('data/exhibition_photos.json');
+  DATA.texts = await loadJSON('data/texts.json');
+  DATA.writing = await loadJSON('data/writing.json');
+  DATA.artworks = await loadJSON('data/artworks.json');
+  DATA.contact = await loadJSON('data/contact.json');
+  DATA.studio = await loadJSON('data/studio.json');
+
+  renderPage();
+  applyLang(getLang());
+
+  const langToggle = document.getElementById('langToggle');
+  if (langToggle) {
+    langToggle.addEventListener('click', () => setLang(getLang() === 'en' ? 'zh' : 'en'));
+  }
+}
+
+function setLang(lang) {
+  const y = window.scrollY;
+  localStorage.setItem(LANG_STORAGE_KEY, lang);
+  applyLang(lang);
+  requestAnimationFrame(() => window.scrollTo(0, y));
+}
+
+function applyLang(lang) {
+  document.body.classList.toggle('zh', lang === 'zh');
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const value = I18N[lang]?.[el.dataset.i18n];
+    if (value) el.textContent = value;
+  });
+
+  document.querySelectorAll('[data-href-en][data-href-zh]').forEach(el => {
+    el.setAttribute('href', lang === 'zh' ? el.dataset.hrefZh : el.dataset.hrefEn);
+  });
+
+  document.querySelectorAll('[data-content]').forEach(el => {
+    const [root, key] = el.dataset.content.split('.');
+    el.textContent = pick(DATA[root]?.[key], lang);
+  });
+
+  document.querySelectorAll('[data-rich]').forEach(el => {
+    const [root, key] = el.dataset.rich.split('.');
+    el.innerHTML = paragraphs(pick(DATA[root]?.[key], lang));
+  });
+
+  renderDynamic(lang);
+
+  const langToggle = document.getElementById('langToggle');
+  if (langToggle) langToggle.textContent = lang === 'en' ? 'ZH' : 'EN';
+
+  document.documentElement.classList.remove('prelang-en', 'prelang-zh');
+  document.documentElement.classList.add('lang-ready');
+}
+
+function renderPage() {
+  const page = location.pathname.split('/').pop() || 'index.html';
+  if (page === 'artist.html') renderArtist();
+  if (page === 'exhibitions.html') renderExhibitions();
+  if (page === 'texts.html') renderTexts();
+  if (page === 'writing.html') renderWriting();
+  if (page === 'writing-text.html') renderWritingDetail();
+  if (page === 'writing-book.html') renderWritingBook();
+  if (page === 'writing-chapter.html') renderWritingChapter();
+  if (page === 'text.html') renderTextDetail();
+  if (page === 'statement.html') renderStatementPage();
+  if (page === 'artworks.html') renderArtworks();
+  if (page === 'studio.html') renderStudio();
+  if (page === 'contact.html') renderContact();
+}
+
+function renderArtist() {
+  const tl = document.getElementById('timeline');
+  if (tl && DATA.artist?.timeline) {
+    tl.innerHTML = DATA.artist.timeline.map(item => `
+      <div class="timeline-item">
+        <div class="timeline-year">${item.year}</div>
+        <div data-en="${escapeHtml(item.en)}" data-zh="${escapeHtml(item.zh)}"></div>
+      </div>
+    `).join('');
+  }
+
+  const preview = document.getElementById('statementPreview');
+  if (preview && (DATA.artist?.statement_preview || DATA.artist?.statement)) {
+    const source = DATA.artist.statement_preview || {
+      en: excerptText(DATA.artist.statement.en, 3),
+      zh: excerptText(DATA.artist.statement.zh, 3)
+    };
+    preview.setAttribute('data-en', escapeHtml(source.en));
+    preview.setAttribute('data-zh', escapeHtml(source.zh));
+    preview.classList.add('text-body');
+  }
+}
+
+function eventHTML(e) {
+  return `
+    <div class="event">
+      <div class="event-year">${e.year || ''}</div>
+      <div>
+        <div class="event-title" data-en="${escapeHtml(e.title_en)}" data-zh="${escapeHtml(e.title_zh)}"></div>
+        <div class="event-meta" data-en="${escapeHtml((e.date_en || '') + ' · ' + (e.venue_en || ''))}" data-zh="${escapeHtml((e.date_zh || '') + ' · ' + (e.venue_zh || ''))}"></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderExhibitions() {
+  if (!DATA.exhibitions) return;
+  const el = document.getElementById('soloList');
+  if (el) el.innerHTML = (DATA.exhibitions.solo || []).map(eventHTML).join('');
+
+  const gallery = document.getElementById('exhibitionGallery');
+  if (gallery && DATA.exhibitionPhotos?.items) {
+    gallery.innerHTML = DATA.exhibitionPhotos.items.map((item, index) => `
+      <article class="exhibition-frame" id="exhibition-photo-${String(index + 1).padStart(2, '0')}">
+        <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt_en || 'Xunmu Wu exhibition scene')}" loading="lazy">
+      </article>
+    `).join('');
+  }
+}
+
+function getTextHref(item) {
+  if (!item) return 'texts.html';
+  if (item.id === 'statement') return 'statement.html?from=texts';
+  return `text.html?id=${encodeURIComponent(item.id)}&from=texts`;
+}
+
+
+
+function getWritingHref(item) {
+  if (!item) return 'writing.html';
+  return `writing-book.html?id=${encodeURIComponent(item.id)}`;
+}
+
+function getWritingChapterHref(book, chapter) {
+  return `writing-chapter.html?book=${encodeURIComponent(book.id)}&chapter=${encodeURIComponent(chapter.id)}`;
+}
+
+function renderWriting() {
+  const el = document.getElementById('writingList');
+  if (!el || !DATA.writing?.items) return;
+  el.innerHTML = DATA.writing.items.map(item => `
+    <article class="writing-preview" id="writing-${escapeHtml(item.id)}">
+      <h2><a class="writing-title-link" href="${escapeHtml(getWritingHref(item))}" data-en="${escapeHtml(item.title_en)}" data-zh="${escapeHtml(item.title_zh)}"></a></h2>
+      <div class="writing-year">${escapeHtml(item.year || '')}</div>
+      <div class="text-body writing-excerpt" data-en="${escapeHtml(item.preview_en || '')}" data-zh="${escapeHtml(item.preview_zh || '')}"></div>
+      <a class="read-link" href="${escapeHtml(getWritingHref(item))}" data-i18n="read"></a>
+    </article>
+  `).join('');
+}
+
+function renderWritingBook() {
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id') || 'mending-the-fire';
+  const book = DATA.writing?.items?.find(x => x.id === id) || DATA.writing?.items?.[0];
+  const title = document.getElementById('bookTitle');
+  const year = document.getElementById('bookYear');
+  const contents = document.getElementById('bookContents');
+  if (!book) return;
+  if (title) {
+    title.setAttribute('data-en', escapeHtml(book.title_en));
+    title.setAttribute('data-zh', escapeHtml(book.title_zh));
+  }
+  if (year) year.textContent = book.year || '';
+  if (contents) {
+    contents.innerHTML = (book.chapters || []).map(ch => `
+      <a class="chapter-row" href="${escapeHtml(getWritingChapterHref(book, ch))}">
+        <span class="chapter-number">${escapeHtml(ch.number || '')}</span>
+        <span class="chapter-title" data-en="${escapeHtml(ch.title_en)}" data-zh="${escapeHtml(ch.title_zh)}"></span>
+        <span class="chapter-arrow">→</span>
+      </a>
+    `).join('');
+  }
+}
+
+function renderWritingChapter() {
+  const params = new URLSearchParams(location.search);
+  const bookId = params.get('book') || 'mending-the-fire';
+  const chapterId = params.get('chapter') || '';
+  const book = DATA.writing?.items?.find(x => x.id === bookId) || DATA.writing?.items?.[0];
+  if (!book) return;
+  const chapters = book.chapters || [];
+  let index = chapters.findIndex(x => x.id === chapterId);
+  if (index < 0) index = 0;
+  const chapter = chapters[index];
+  const bookTitle = document.getElementById('chapterBookTitle');
+  const chapterNo = document.getElementById('chapterNumber');
+  const chapterTitle = document.getElementById('chapterTitle');
+  const body = document.getElementById('chapterBody');
+  const contents = document.getElementById('chapterContents');
+  const prev = document.getElementById('prevChapter');
+  const next = document.getElementById('nextChapter');
+  const back = document.getElementById('chapterBackToContents');
+  const backBottom = document.getElementById('chapterBackBottom');
+  if (bookTitle) {
+    bookTitle.setAttribute('data-en', escapeHtml(book.title_en));
+    bookTitle.setAttribute('data-zh', escapeHtml(book.title_zh));
+  }
+  if (chapterNo) chapterNo.textContent = chapter.number || String(index + 1).padStart(2, '0');
+  if (chapterTitle) {
+    chapterTitle.setAttribute('data-en', escapeHtml(chapter.title_en));
+    chapterTitle.setAttribute('data-zh', escapeHtml(chapter.title_zh));
+  }
+  if (body) {
+    body.setAttribute('data-en', escapeHtml(chapter.content_en));
+    body.setAttribute('data-zh', escapeHtml(chapter.content_zh));
+    body.classList.add('text-body');
+  }
+  if (contents) {
+    contents.innerHTML = chapters.map((ch, i) => `
+      <a class="contents-link ${i === index ? 'active' : ''}" href="${escapeHtml(getWritingChapterHref(book, ch))}">
+        <span>${escapeHtml(ch.number || String(i + 1).padStart(2, '0'))}</span>
+        <span data-en="${escapeHtml(ch.title_en)}" data-zh="${escapeHtml(ch.title_zh)}"></span>
+      </a>
+    `).join('');
+  }
+  if (back) back.href = `writing-book.html?id=${encodeURIComponent(book.id)}`;
+  if (backBottom) backBottom.href = `writing-book.html?id=${encodeURIComponent(book.id)}`;
+  if (prev) {
+    if (index > 0) {
+      prev.href = getWritingChapterHref(book, chapters[index - 1]);
+      prev.classList.remove('disabled');
+    } else {
+      prev.href = `writing-book.html?id=${encodeURIComponent(book.id)}`;
+      prev.classList.add('disabled');
+    }
+  }
+  if (next) {
+    if (index < chapters.length - 1) {
+      next.href = getWritingChapterHref(book, chapters[index + 1]);
+      next.classList.remove('disabled');
+    } else {
+      next.href = 'writing.html';
+      next.classList.remove('disabled');
+    }
+  }
+}
+
+function renderWritingDetail() {
+  // Kept for older links: redirect to the book contents page.
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id') || 'mending-the-fire';
+  location.replace(`writing-book.html?id=${encodeURIComponent(id)}`);
+}
+
+function renderTexts() {
+  const el = document.getElementById('textsList');
+  const overview = document.getElementById('textOverview');
+  if (el && DATA.texts?.items) {
+    el.innerHTML = DATA.texts.items.map(t => `
+      <a class="text-link-card" href="${escapeHtml(getTextHref(t))}">
+        <span class="text-link-title" data-en="${escapeHtml(t.title_en)}" data-zh="${escapeHtml(t.title_zh)}"></span>
+        <span class="text-link-arrow">→</span>
+      </a>
+    `).join('');
+  }
+  if (overview && DATA.texts?.items) {
+    overview.innerHTML = DATA.texts.items.map(t => {
+      const href = getTextHref(t);
+      const readLink = `<a class="read-link" href="${escapeHtml(href)}" data-en="Read Full Text →" data-zh="阅读全文 →"></a>`;
+      return `
+        <article class="text-overview-section" id="text-${escapeHtml(t.id)}">
+          <div class="text-overview-heading">
+            <h2 data-en="${escapeHtml(t.title_en)}" data-zh="${escapeHtml(t.title_zh)}"></h2>
+            ${readLink}
+          </div>
+          <div class="text-body publication-text" data-text-id="${escapeHtml(t.id)}" data-en="${escapeHtml(getTextPreview(t, 'en'))}" data-zh="${escapeHtml(getTextPreview(t, 'zh'))}"></div>
+        </article>
+      `;
+    }).join('');
+  }
+}
+
+function renderTextDetail() {
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id') || 'on-painting';
+  const item = DATA.texts?.items?.find(t => t.id === id);
+  const title = document.getElementById('textTitle');
+  const body = document.getElementById('textDetail');
+  if (!item) {
+    if (title) title.setAttribute('data-en', 'Text Not Found'), title.setAttribute('data-zh', '未找到文本');
+    if (body) body.setAttribute('data-en', ''), body.setAttribute('data-zh', '');
+    return;
+  }
+  if (title) {
+    title.setAttribute('data-en', escapeHtml(item.title_en));
+    title.setAttribute('data-zh', escapeHtml(item.title_zh));
+  }
+  if (body) {
+    body.setAttribute('data-text-id', escapeHtml(item.id));
+    body.setAttribute('data-en', escapeHtml(item.content_en));
+    body.setAttribute('data-zh', escapeHtml(item.content_zh));
+  }
+}
+
+
+function renderStatementPage() {
+  const back = document.getElementById('statementBackLink');
+  if (!back) return;
+  const params = new URLSearchParams(location.search);
+  const from = params.get('from');
+  if (from === 'texts') {
+    back.href = 'texts.html#text-statement';
+    back.dataset.i18n = 'back_to_texts';
+  } else {
+    back.href = 'artist.html';
+    back.dataset.i18n = 'back_to_artist';
+  }
+}
+
+function renderArtworks() {
+  const el = document.getElementById('selectedWorks');
+  if (el && DATA.artworks?.works) {
+    const works = [...DATA.artworks.works].sort((a, b) => (a.order || 0) - (b.order || 0));
+    el.innerHTML = works.map((w, index) => `
+      <article class="work-panel" id="${escapeHtml(w.id)}">
+        <div class="work-image-wrap">
+          <img src="${escapeHtml(w.image)}" alt="${escapeHtml(w.title_en)}" loading="lazy">
+        </div>
+        <div class="work-info">
+          <div class="work-count">${String(index + 1).padStart(2, '0')} / ${String(works.length).padStart(2, '0')}</div>
+          <h2 data-en="${escapeHtml(w.title_en)}" data-zh="${escapeHtml(w.title_zh)}"></h2>
+          <div class="work-meta">
+            <div>${escapeHtml(w.year || '')}</div>
+            <div data-en="${escapeHtml(w.medium_en)}" data-zh="${escapeHtml(w.medium_zh)}"></div>
+            <div>${escapeHtml(w.dimensions_cm || '')}</div>
+            <div>${escapeHtml(w.dimensions_in || '')}</div>
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+}
+
+
+function renderStudio() {
+  const el = document.getElementById('studioGallery');
+  if (el && DATA.studio?.items) {
+    el.innerHTML = DATA.studio.items.map((item, index) => `
+      <article class="studio-frame" id="studio-${String(index + 1).padStart(2, '0')}">
+        <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt_en || 'Xunmu Wu Studio')}" loading="lazy">
+      </article>
+    `).join('');
+  }
+}
+
+function renderContact() {
+  if (!DATA.contact) return;
+  const email = document.getElementById('emailLink');
+  if (email) {
+    email.href = 'mailto:' + DATA.contact.email;
+    email.textContent = DATA.contact.email;
+  }
+  const ig = document.getElementById('instagramLink');
+  if (ig) ig.href = DATA.contact.instagram || '#';
+  const fb = document.getElementById('facebookLink');
+  if (fb) fb.href = DATA.contact.facebook || '#';
+}
+
+function renderDynamic(lang) {
+  document.querySelectorAll('[data-en][data-zh]').forEach(el => {
+    const val = lang === 'zh' ? el.dataset.zh : el.dataset.en;
+    if (el.classList.contains('text-body')) {
+      const textId = el.dataset.textId || '';
+      if (textId === 'on-painting') {
+        el.innerHTML = renderOnPainting(val, lang);
+      } else if (textId === 'reflections') {
+        el.innerHTML = renderReflectionBlocks(val);
+      } else {
+        el.innerHTML = paragraphs(val);
+      }
+    } else {
+      el.textContent = val;
+    }
+  });
+}
+
+function getTextPreview(item, lang) {
+  const content = lang === 'zh' ? item.content_zh : item.content_en;
+  if (item.id === 'statement') {
+    const artistPreview = DATA.artist?.statement_preview;
+    if (artistPreview) return pick(artistPreview, lang);
+    return excerptText(content, 4);
+  }
+  return content || '';
+}
+
+function renderOnPainting(text, lang) {
+  const titles = lang === 'zh'
+    ? ['我对绘画的态度', '希望能画这样一张画', '我喜欢的画', '我想画这样一张画', '希望我的作品']
+    : ['My Attitude Toward Painting', 'A Picture I Long to Paint', 'The Kind of Painting I Love', 'A Picture I Wish to Paint', 'What I Hope My Work Can Be'];
+  const blocks = [];
+  let current = null;
+  (text || '').split(/\n\s*\n/).map(x => x.trim()).filter(Boolean).forEach(part => {
+    if (titles.includes(part)) {
+      current = { title: part, body: [] };
+      blocks.push(current);
+    } else {
+      if (!current) {
+        current = { title: '', body: [] };
+        blocks.push(current);
+      }
+      current.body.push(part);
+    }
+  });
+  return blocks.map(block => `
+    <section class="publication-section">
+      ${block.title ? `<h3>${block.title.replace(/[：:]$/, '')}${lang === 'zh' ? '：' : ':'}</h3>` : ''}
+      ${block.body.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('')}
+    </section>
+  `).join('');
+}
+
+function renderReflectionBlocks(text) {
+  return (text || '')
+    .split(/\n\s*\n/)
+    .map(x => x.trim())
+    .filter(Boolean)
+    .map(p => `<section class="reflection-block"><p>${p.replace(/\n/g, '<br>')}</p></section>`)
+    .join('');
+}
+
+function excerptText(text, count = 3) {
+  return (text || '')
+    .split(/\n\s*\n/)
+    .filter(Boolean)
+    .slice(0, count)
+    .join('\n\n');
+}
+
+function escapeHtml(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+init();
