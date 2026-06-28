@@ -468,3 +468,80 @@ body.zh .publication-section h3{font-family:"Noto Sans SC","Helvetica Neue",Aria
     margin: 0;
   }
 }
+
+/* 2026-06-28 Mobile writing-book contents refinement: reduce oversized book titles and chapter list text */
+@media (max-width: 640px){
+  .book-hero{
+    padding-top: 150px;
+    padding-bottom: 34px;
+  }
+  .book-hero .back-link{
+    margin-bottom: 38px;
+    font-size: 12px;
+    letter-spacing: .12em;
+  }
+  .book-hero h1{
+    font-size: clamp(42px, 10.5vw, 54px);
+    line-height: 1.12;
+    letter-spacing: .02em;
+  }
+  body.zh .book-hero h1{
+    font-size: clamp(44px, 11vw, 56px);
+    letter-spacing: .06em;
+  }
+  .book-year,
+  .writing-year{
+    font-size: 12px;
+    margin-top: 18px;
+  }
+  .book-contents-section{
+    padding-top: 46px;
+    padding-bottom: 110px;
+  }
+  .book-contents-section h2{
+    font-size: 32px;
+    line-height: 1.2;
+    margin-bottom: 34px;
+  }
+  body.zh .book-contents-section h2{
+    font-size: 34px;
+    letter-spacing: .06em;
+  }
+  .chapter-row{
+    grid-template-columns: 44px minmax(0, 1fr) 22px;
+    gap: 14px;
+    padding: 24px 0;
+  }
+  .chapter-row .chapter-number{
+    font-size: 12px;
+    letter-spacing: .16em;
+  }
+  .chapter-row .chapter-title{
+    font-size: clamp(22px, 6vw, 28px);
+    line-height: 1.35;
+    letter-spacing: .015em;
+  }
+  body.zh .chapter-row .chapter-title{
+    font-size: clamp(24px, 6.2vw, 30px);
+    line-height: 1.35;
+    letter-spacing: .05em;
+  }
+  .chapter-arrow{
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 380px){
+  .book-hero h1,
+  body.zh .book-hero h1{
+    font-size: 44px;
+  }
+  .book-contents-section h2,
+  body.zh .book-contents-section h2{
+    font-size: 30px;
+  }
+  .chapter-row .chapter-title,
+  body.zh .chapter-row .chapter-title{
+    font-size: 23px;
+  }
+}
