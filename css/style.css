@@ -400,3 +400,71 @@ body.zh .publication-section h3{font-family:"Noto Sans SC","Helvetica Neue",Aria
     font-size:11px;
   }
 }
+
+
+/* 2026-06-28 Mobile selected works metadata fix: prevent year/size text from being pushed off-screen */
+@media (max-width: 640px){
+  .selected-works{
+    padding-left: clamp(20px, 5vw, 32px);
+    padding-right: clamp(20px, 5vw, 32px);
+  }
+  .work-panel{
+    padding: 56px 0 86px;
+    gap: 22px;
+  }
+  .work-image-wrap,
+  .work-info{
+    width: 100%;
+  }
+  .work-info{
+    display: grid;
+    grid-template-columns: 58px 1fr;
+    grid-template-areas:
+      "count title"
+      "meta meta";
+    column-gap: 18px;
+    row-gap: 14px;
+    align-items: start;
+  }
+  .work-count{
+    grid-area: count;
+    margin: .45em 0 0;
+    font-size: 12px;
+    letter-spacing: .16em;
+    white-space: nowrap;
+  }
+  .work-info h2{
+    grid-area: title;
+    margin: 0;
+    font-size: clamp(32px, 10vw, 44px);
+    line-height: 1.12;
+    letter-spacing: .04em;
+    word-break: keep-all;
+  }
+  .work-meta{
+    grid-area: meta;
+    width: 100%;
+    margin-top: 2px;
+    font-size: 15px;
+    line-height: 1.8;
+    letter-spacing: .04em;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+  body.zh .work-meta{
+    letter-spacing: .04em;
+  }
+}
+
+@media (max-width: 380px){
+  .work-info{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "count"
+      "title"
+      "meta";
+  }
+  .work-count{
+    margin: 0;
+  }
+}

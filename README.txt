@@ -4,3 +4,5 @@ XUNMU WU Digital Archive V2.2 - Writing Module
 中文页面只显示中文，英文页面只显示英文。
 
 Studio image path mixed-case fix 2026-06-28.
+
+Mobile works metadata layout fix 2026-06-28
