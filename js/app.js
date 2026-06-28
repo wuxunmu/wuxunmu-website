@@ -74,6 +74,7 @@ async function init() {
   DATA.contact = await loadJSON('data/contact.json');
   DATA.studio = await loadJSON('data/studio.json');
 
+  normalizeData();
   renderPage();
   applyLang(getLang());
 
@@ -122,20 +123,41 @@ function applyLang(lang) {
   document.documentElement.classList.add('lang-ready');
 }
 
+function normalizeData() {
+  // Be tolerant of data files exported with translated/Chinese top-level keys.
+  if (DATA.artworks && !DATA.artworks.works) {
+    DATA.artworks.works = DATA.artworks.works || DATA.artworks.items || DATA.artworks['作品'] || DATA.artworks['artworks'] || [];
+  }
+  if (DATA.texts && !DATA.texts.items) {
+    DATA.texts.items = DATA.texts.items || DATA.texts['文献'] || DATA.texts['texts'] || [];
+  }
+  if (DATA.writing && !DATA.writing.items) {
+    DATA.writing.items = DATA.writing.items || DATA.writing['写作'] || DATA.writing['writing'] || [];
+  }
+  if (DATA.studio && !DATA.studio.items) {
+    DATA.studio.items = DATA.studio.items || DATA.studio['创作现场'] || DATA.studio['studio'] || DATA.studio['images'] || [];
+  }
+  if (DATA.exhibitionPhotos && !DATA.exhibitionPhotos.items) {
+    DATA.exhibitionPhotos.items = DATA.exhibitionPhotos.items || DATA.exhibitionPhotos['展览照片'] || DATA.exhibitionPhotos['photos'] || [];
+  }
+}
+
 function renderPage() {
-  const page = location.pathname.split('/').pop() || 'index.html';
-  if (page === 'artist.html') renderArtist();
-  if (page === 'exhibitions.html') renderExhibitions();
-  if (page === 'texts.html') renderTexts();
-  if (page === 'writing.html') renderWriting();
+  // Render by page filename when possible, but also render by target element IDs.
+  // This prevents empty pages if a browser, link, or translated filename differs from the expected English filename.
+  const page = decodeURIComponent(location.pathname.split('/').pop() || 'index.html');
+  if (page === 'artist.html' || document.getElementById('timeline') || document.getElementById('statementPreview')) renderArtist();
+  if (page === 'exhibitions.html' || document.getElementById('soloList') || document.getElementById('exhibitionGallery')) renderExhibitions();
+  if (page === 'texts.html' || document.getElementById('textsList') || document.getElementById('textOverview')) renderTexts();
+  if (page === 'writing.html' || document.getElementById('writingList')) renderWriting();
   if (page === 'writing-text.html') renderWritingDetail();
-  if (page === 'writing-book.html') renderWritingBook();
-  if (page === 'writing-chapter.html') renderWritingChapter();
-  if (page === 'text.html') renderTextDetail();
-  if (page === 'statement.html') renderStatementPage();
-  if (page === 'artworks.html') renderArtworks();
-  if (page === 'studio.html') renderStudio();
-  if (page === 'contact.html') renderContact();
+  if (page === 'writing-book.html' || document.getElementById('bookContents')) renderWritingBook();
+  if (page === 'writing-chapter.html' || document.getElementById('chapterBody')) renderWritingChapter();
+  if (page === 'text.html' || document.getElementById('textDetail')) renderTextDetail();
+  if (page === 'statement.html' || document.getElementById('statementBackLink')) renderStatementPage();
+  if (page === 'artworks.html' || document.getElementById('selectedWorks')) renderArtworks();
+  if (page === 'studio.html' || document.getElementById('studioGallery')) renderStudio();
+  if (page === 'contact.html' || document.getElementById('emailLink')) renderContact();
 }
 
 function renderArtist() {
