@@ -6,3 +6,5 @@ XUNMU WU Digital Archive V2.2 - Writing Module
 Studio image path mixed-case fix 2026-06-28.
 
 Mobile works metadata layout fix 2026-06-28
+
+Compact mobile writing book layout 2026-06-28
