@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artist Statement | Xunmu Wu (吴训木)</title>
+  <meta name="description" content="Artist statement by Xunmu Wu (吴训木), reflecting on art, nature, mythology, spirituality, and the connection between humanity and the universe.">
+  <link rel="canonical" href="https://wuxunmu.com/statement.html">
+  <meta property="og:title" content="Artist Statement | Xunmu Wu (吴训木)">
+  <meta property="og:description" content="Artist statement by Xunmu Wu (吴训木), reflecting on art, nature, mythology, spirituality, and the connection between humanity and the universe.">
+  <meta property="og:url" content="https://wuxunmu.com/statement.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Xunmu Wu">
+  <meta property="og:image" content="https://wuxunmu.com/images/hero-beyond-boundaries.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Artist Statement | Xunmu Wu (吴训木)">
+  <meta name="twitter:description" content="Artist statement by Xunmu Wu (吴训木), reflecting on art, nature, mythology, spirituality, and the connection between humanity and the universe.">
+  <meta name="twitter:image" content="https://wuxunmu.com/images/hero-beyond-boundaries.jpg">
+  <script>
+    (function () {
+      var savedLang = localStorage.getItem('aether_lang');
+      var browserLangs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || navigator.userLanguage || ''])
+        .filter(Boolean)
+        .map(function (lang) { return String(lang).toLowerCase(); });
+      var detectedLang = browserLangs.some(function (lang) { return lang.indexOf('zh') === 0; }) ? 'zh' : 'en';
+      var lang = savedLang || detectedLang;
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.documentElement.classList.add('prelang-' + lang);
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" data-i18n="brand">XUNMU WU</a>
+    <nav>
+      <a data-i18n="nav_artist" href="artist.html">The Artist</a>
+      <a data-i18n="nav_artworks" href="artworks.html">Artworks</a>
+      <a data-i18n="nav_writing" href="writing.html">Writing</a>
+      <a data-i18n="nav_exhibitions" href="exhibitions.html">Exhibitions</a>
+      <a data-i18n="nav_studio" href="studio.html">Studio</a>
+      <a data-i18n="nav_texts" href="texts.html">Texts</a>
+      <a data-i18n="nav_contact" href="contact.html">Contact</a>
+    </nav>
+    <button class="lang-toggle" id="langToggle">ZH</button>
+  </header>
+
+  <main>
+    <section class="page-hero statement-hero">
+      <p class="eyebrow" data-i18n="nav_texts">Texts</p>
+      <h1 data-i18n="artist_statement">Artist Statement</h1>
+    </section>
+
+    <section class="statement-page">
+      <article id="fullStatement" class="text-body full-statement" data-rich="artist.statement"></article>
+      <a id="statementBackLink" class="read-link" href="artist.html" data-i18n="back_to_artist">Back to The Artist →</a>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="copyright">© 2026 Xunmu Wu. All Rights Reserved.</div></footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

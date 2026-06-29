@@ -1,0 +1,143 @@
+{
+  "solo": [
+    {
+      "year": "2025",
+      "title_en": "Symphony of Life and Art | Solo Exhibition of Xunmu Wu",
+      "title_zh": "生命与艺术的交响——吴训木个展",
+      "date_en": "July 5 – August 5, 2025",
+      "date_zh": "2025年7月5日至8月5日",
+      "venue_en": "Poly Xiamen Art Center, Fujian, China",
+      "venue_zh": "中国福建，保利厦门艺术中心"
+    },
+    {
+      "year": "2024",
+      "title_en": "Echo of the Mountains | Solo Exhibition by Xunmu Wu",
+      "title_zh": "山峦回声——吴训木学术邀请展",
+      "date_en": "August 8 – 31, 2024",
+      "date_zh": "2024年8月8日至8月31日",
+      "venue_en": "Florence Academy of the Arts of Drawing, Florence, Italy",
+      "venue_zh": "意大利佛罗伦萨国立美术学院"
+    },
+    {
+      "year": "2024",
+      "title_en": "SOLO EXHIBITION XUNMU WU",
+      "title_zh": "吴训木个展——斯卡尔维尼博物馆专场",
+      "date_en": "January 13 – 26, 2024",
+      "date_zh": "2024年1月13日至1月26日",
+      "venue_en": "Scalvini Museum, Desio, Italy",
+      "venue_zh": "意大利德西奥，斯卡尔维尼博物馆"
+    },
+    {
+      "year": "2023",
+      "title_en": "Starry Sky of Shepherds | Solo Exhibition of Xunmu Wu",
+      "title_zh": "牧人星空——吴训木个展",
+      "date_en": "September 30 – October 22, 2023",
+      "date_zh": "2023年9月30日至10月22日",
+      "venue_en": "Museo Giuseppe Scalvini, Desio, Italy",
+      "venue_zh": "意大利伦巴第大区德西奥，斯卡尔维尼博物馆"
+    },
+    {
+      "year": "2022",
+      "title_en": "The Tunnel of Time",
+      "title_zh": "时空隧道",
+      "date_en": "April 1 – 29, 2022",
+      "date_zh": "2022年4月1日至4月29日",
+      "venue_en": "Italian Cultural Institute, Brussels, Belgium",
+      "venue_zh": "比利时布鲁塞尔，意大利文化中心"
+    },
+    {
+      "year": "2021",
+      "title_en": "Ancient Fairy Tales | Solo Exhibition of Xunmu Wu",
+      "title_zh": "远古童话——吴训木个展",
+      "date_en": "October 8 – 15, 2021",
+      "date_zh": "2021年10月8日至10月15日",
+      "venue_en": "Baoku Gallery, Shanghai Tower, China",
+      "venue_zh": "中国上海中心38层宝库画廊"
+    }
+  ],
+  "group": [
+    {
+      "year": "2024",
+      "title_en": "Chinese Expression 2024",
+      "title_zh": "“中国表现2024”艺术大展",
+      "date_en": "December 27, 2024 – March 2, 2025",
+      "date_zh": "2024年12月27日至2025年3月2日",
+      "venue_en": "Tai Museum, Shanghai, China",
+      "venue_zh": "中国上海，泰美术馆"
+    },
+    {
+      "year": "2024",
+      "title_en": "The Way You Look | International Art Exhibition",
+      "title_zh": "“The Way You Look” 国际艺术展",
+      "date_en": "July 12 – 26, 2024",
+      "date_zh": "2024年7月12日至7月26日",
+      "venue_en": "Galleria Galleani, Pietrasanta, Italy",
+      "venue_zh": "意大利比耶特拉桑塔，加莱阿尼画廊"
+    },
+    {
+      "year": "2024",
+      "title_en": "#ARTFORSUSTAINABILITY Group Exhibition",
+      "title_zh": "2024 #ARTFORSUSTAINABILITY 群展",
+      "date_en": "April 10 – 24, 2024",
+      "date_zh": "2024年4月10日至4月24日",
+      "venue_en": "Art Art Gallery, Florence, Italy",
+      "venue_zh": "意大利佛罗伦萨，Art Art画廊"
+    },
+    {
+      "year": "2023",
+      "title_en": "2nd Scalvini Museum Biennale 2023",
+      "title_zh": "2023年第二届斯卡尔维尼美术馆双年展",
+      "date_en": "May 25 – 28, 2023",
+      "date_zh": "2023年5月25日至28日",
+      "venue_en": "Desio, Italy. First Prize in Painting",
+      "venue_zh": "意大利德西奥。绘画类一等奖"
+    },
+    {
+      "year": "2022",
+      "title_en": "XXXIX Premio Firenze 2022",
+      "title_zh": "第39届佛罗伦萨奖",
+      "date_en": "December 3, 2022",
+      "date_zh": "2022年12月3日",
+      "venue_en": "Palazzo Vecchio, Florence, Italy. Silver Fiorino in Painting",
+      "venue_zh": "意大利佛罗伦萨维奇奥宫。绘画类银奖"
+    }
+  ],
+  "fair": [
+    {
+      "year": "2025",
+      "title_en": "Cremona Art Fair 2025",
+      "title_zh": "2025克雷莫纳艺术博览会",
+      "date_en": "March 21 – 23, 2025",
+      "date_zh": "2025年3月21日至23日",
+      "venue_en": "Cremona, Italy",
+      "venue_zh": "意大利克雷莫纳"
+    },
+    {
+      "year": "2024",
+      "title_en": "Art San Diego 2024",
+      "title_zh": "圣地亚哥艺术博览会2024",
+      "date_en": "October 31 – November 3, 2024",
+      "date_zh": "2024年10月31日至11月3日",
+      "venue_en": "San Diego, USA",
+      "venue_zh": "美国圣地亚哥"
+    },
+    {
+      "year": "2024",
+      "title_en": "Artexpo New York 2024",
+      "title_zh": "纽约国际艺术博览会2024",
+      "date_en": "April 4 – 7, 2024",
+      "date_zh": "2024年4月4日至7日",
+      "venue_en": "New York, USA",
+      "venue_zh": "美国纽约"
+    },
+    {
+      "year": "2023",
+      "title_en": "ART SHOPPING 2023 – Salon International d’Art Contemporain",
+      "title_zh": "ART SHOPPING 2023—巴黎卢浮宫国际当代艺术展",
+      "date_en": "October 20 – 22, 2023",
+      "date_zh": "2023年10月20日至22日",
+      "venue_en": "Paris, France",
+      "venue_zh": "法国巴黎"
+    }
+  ]
+}
