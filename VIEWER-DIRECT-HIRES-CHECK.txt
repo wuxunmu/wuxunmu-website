@@ -1,0 +1,11 @@
+Direct Hires Viewer v6
+
+This version loads the 6000px /images/artworks/hires/*-hires.jpg directly when an artwork is opened.
+
+How to verify:
+1. Deploy to Cloudflare.
+2. Open artworks page in an incognito/private window.
+3. Tap/click one artwork.
+4. The zoom label should briefly show "高清加载中", then "100%".
+5. Right click/open image in new tab on desktop, or inspect the image URL: it should contain /images/artworks/hires/ and -hires.jpg?v=hires-v5.
+6. On mobile, double tap a detail area: it jumps to 300%. Pinch with two fingers to continue zooming.

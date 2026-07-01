@@ -1,0 +1,5 @@
+Viewer v5 check:
+1. Open an artwork.
+2. After the image finishes loading, right-click/open image in new tab.
+3. The URL should contain /images/artworks/hires/ and end with -hires.jpg?v=hires-v5.
+4. The zoom percentage button should change from 100% to 125%, 156%, etc.

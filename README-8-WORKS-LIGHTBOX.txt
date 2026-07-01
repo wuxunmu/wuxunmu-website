@@ -1,0 +1,1 @@
+This version replaces the previous artworks with 8 large oil paintings and adds a full-screen high-resolution artwork viewer. Display images are in images/artworks/. High-resolution images are in images/artworks/hires/. Artwork order follows the file sequence numbers 001, 002, 003, 004, 005, 006, 008, 009.

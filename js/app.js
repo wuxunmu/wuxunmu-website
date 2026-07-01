@@ -1,3 +1,4 @@
+const VIEWER_VERSION = 'direct-hires-v6';
 const I18N = {
   en: {
     brand: 'XUNMU WU', digital_archive: 'Digital Archive', footer_archive: 'XUNMU WU DIGITAL ARCHIVE',
@@ -8,6 +9,8 @@ const I18N = {
     solo: 'Solo Exhibitions', group: 'Group Exhibitions', fair: 'Art Fairs', complete_cv: 'Complete CV', complete_cv_note: 'Complete exhibition history, awards and art fair records will be available in the downloadable CV.', download_cv_soon: 'Download Complete CV · Coming Soon', read_full_statement: 'Read Full Statement →', back_to_artist: 'Back to The Artist →',
     texts_title: 'Literature', texts_lead: '', back_to_texts: 'Back to Literature →', writing_title: 'Writing', read_full_text: 'Read Full Text →', back_to_writing: 'Back to Writing →', contents: 'Contents', previous_chapter: 'Previous Chapter', next_chapter: 'Next Chapter', back_to_contents: 'Back to Contents', read: 'Read →',
     artworks_title: 'Artworks', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: 'Selected Works', selected_works_lead: '',
+    artwork_series_link: 'Thresholds of Time and Space', more_works_link: 'More Works',
+    more_works_title: 'More Works', more_works_note: 'Additional works will be added to this section.',
     contact_title: 'Contact', studio_title: 'Studio', biography: 'Biography', timeline: 'Timeline', cv: 'CV', artist_statement: 'Artist Statement'
   },
   zh: {
@@ -18,7 +21,9 @@ const I18N = {
     artist_title: '艺术家', exhibitions_title: '展览', exhibitions_lead: '',
     solo: '个展', group: '群展', fair: '艺术博览会', complete_cv: '完整艺术履历', complete_cv_note: '完整展览履历、获奖与艺博会记录将收录于可下载的完整 CV。', download_cv_soon: '下载完整履历 · 即将提供', read_full_statement: '阅读全文 →', back_to_artist: '返回艺术家 →',
     texts_title: '文献', texts_lead: '', back_to_texts: '返回文献 →', writing_title: '写作', read_full_text: '阅读全文 →', back_to_writing: '返回写作 →', contents: '目录', previous_chapter: '上一章', next_chapter: '下一章', back_to_contents: '返回目录', read: '阅读 →',
-    artworks_title: '作品', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: '代表作品', selected_works_lead: '',
+    artworks_title: '\u4f5c\u54c1', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: '\u4ee3\u8868\u4f5c\u54c1', selected_works_lead: '',
+    artwork_series_link: '\u65f6\u7a7a\u96a7\u9053\u7cfb\u5217', more_works_link: '\u66f4\u591a\u4f5c\u54c1',
+    more_works_title: '\u66f4\u591a\u4f5c\u54c1', more_works_note: '\u66f4\u591a\u4f5c\u54c1\u5c06\u7ee7\u7eed\u6574\u7406\u5e76\u653e\u5165\u8fd9\u4e2a\u9875\u9762\u3002',
     contact_title: '联系', studio_title: '创作现场', biography: '简介', timeline: '时间轴', cv: '完整艺术履历', artist_statement: '艺术家自述'
   }
 };
@@ -403,23 +408,26 @@ function renderArtworks() {
   const el = document.getElementById('selectedWorks');
   if (el && DATA.artworks?.works) {
     const works = [...DATA.artworks.works].sort((a, b) => (a.order || 0) - (b.order || 0));
+    window.__artworkViewerWorks = works;
     el.innerHTML = works.map((w, index) => `
       <article class="work-panel" id="${escapeHtml(w.id)}">
-        <div class="work-image-wrap">
-          <img src="${escapeHtml(w.image)}" alt="${escapeHtml(w.title_en)}" loading="lazy">
-        </div>
+        <button class="work-image-wrap artwork-viewer-trigger" type="button" data-work-index="${index}" aria-label="View ${escapeHtml(w.title_en)} full screen">
+          <img src="${escapeHtml(w.image)}" data-hires="${escapeHtml(w.hires_image || w.image)}" alt="${escapeHtml(w.alt_en || w.title_en)}" loading="lazy">
+        </button>
         <div class="work-info">
-          <div class="work-count">${String(index + 1).padStart(2, '0')} / ${String(works.length).padStart(2, '0')}</div>
+          <div class="work-count">${escapeHtml(w.catalog_number || String(index + 1).padStart(3, '0'))}</div>
           <h2 data-en="${escapeHtml(w.title_en)}" data-zh="${escapeHtml(w.title_zh)}"></h2>
           <div class="work-meta">
-            <div>${escapeHtml(w.year || '')}</div>
+            <div data-en="Artist: ${escapeHtml(w.artist_en || 'Xunmu Wu')}" data-zh="艺术家：${escapeHtml(w.artist_zh || '吴训木')}"></div>
             <div data-en="${escapeHtml(w.medium_en)}" data-zh="${escapeHtml(w.medium_zh)}"></div>
             <div>${escapeHtml(w.dimensions_cm || '')}</div>
             <div>${escapeHtml(w.dimensions_in || '')}</div>
+            <div>${escapeHtml(w.year || '')}</div>
           </div>
         </div>
       </article>
     `).join('');
+    setupArtworkViewer(works);
   }
 }
 
@@ -526,5 +534,309 @@ function escapeHtml(s) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 }
+
+
+
+// Full-screen artwork viewer: click an artwork to view high-resolution image, zoom, drag, pinch, and navigate.
+let artworkViewerState = {
+  works: [], index: 0,
+  scale: 1, x: 0, y: 0,
+  pointers: new Map(),
+  dragStart: null,
+  pinchStart: null,
+  lastTap: { time: 0, x: 0, y: 0 }
+};
+
+function setupArtworkViewer(works) {
+  artworkViewerState.works = works || [];
+  ensureArtworkViewer();
+  document.querySelectorAll('.artwork-viewer-trigger').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openArtworkViewer(Number(btn.dataset.workIndex || 0));
+    });
+  });
+}
+
+function ensureArtworkViewer() {
+  if (document.getElementById('artworkViewer')) return;
+  const viewer = document.createElement('div');
+  viewer.id = 'artworkViewer';
+  viewer.className = 'artwork-viewer';
+  viewer.setAttribute('aria-hidden', 'true');
+  viewer.innerHTML = `
+    <button type="button" class="artwork-viewer-back" id="artworkViewerBack" aria-label="Back to artworks">\u2039 Back to artworks</button>
+    <div class="artwork-viewer-stage" id="artworkViewerStage">
+      <img id="artworkViewerImage" class="artwork-viewer-image" alt="">
+    </div>
+    <div class="artwork-viewer-topbar">
+      <button type="button" class="artwork-viewer-btn" id="artworkViewerClose" aria-label="Close">×</button>
+    </div>
+    <button type="button" class="artwork-viewer-nav artwork-viewer-prev" id="artworkViewerPrev" aria-label="Previous artwork">‹</button>
+    <button type="button" class="artwork-viewer-nav artwork-viewer-next" id="artworkViewerNext" aria-label="Next artwork">›</button>
+    <div class="artwork-viewer-caption">
+      <div id="artworkViewerNumber" class="artwork-viewer-number"></div>
+      <div>
+        <div id="artworkViewerTitle" class="artwork-viewer-title"></div>
+        <div id="artworkViewerMeta" class="artwork-viewer-meta"></div>
+      </div>
+    </div>
+    <div class="artwork-viewer-controls">
+      <button type="button" class="artwork-viewer-control" id="artworkViewerZoomOut">−</button>
+      <button type="button" class="artwork-viewer-control artwork-viewer-zoom-label" id="artworkViewerReset">100%</button>
+      <button type="button" class="artwork-viewer-control" id="artworkViewerZoomIn">+</button>
+    </div>
+  `;
+  document.body.appendChild(viewer);
+
+  const stage = document.getElementById('artworkViewerStage');
+
+  document.getElementById('artworkViewerBack').addEventListener('click', closeArtworkViewer);
+  document.getElementById('artworkViewerClose').addEventListener('click', closeArtworkViewer);
+  document.getElementById('artworkViewerPrev').addEventListener('click', () => moveArtworkViewer(-1));
+  document.getElementById('artworkViewerNext').addEventListener('click', () => moveArtworkViewer(1));
+  document.getElementById('artworkViewerZoomIn').addEventListener('click', () => zoomArtworkViewerAtCenter(1.25));
+  document.getElementById('artworkViewerZoomOut').addEventListener('click', () => zoomArtworkViewerAtCenter(0.8));
+  document.getElementById('artworkViewerReset').addEventListener('click', resetArtworkTransform);
+
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    zoomArtworkViewerAt(e.clientX, e.clientY, artworkViewerState.scale * (e.deltaY < 0 ? 1.12 : 0.9));
+  }, { passive: false });
+
+  stage.addEventListener('pointerdown', onArtworkPointerDown, { passive: false });
+  stage.addEventListener('pointermove', onArtworkPointerMove, { passive: false });
+  stage.addEventListener('pointerup', onArtworkPointerEnd);
+  stage.addEventListener('pointercancel', onArtworkPointerEnd);
+
+  document.addEventListener('keydown', (e) => {
+    const open = document.getElementById('artworkViewer')?.classList.contains('is-open');
+    if (!open) return;
+    if (e.key === 'Escape') closeArtworkViewer();
+    if (e.key === 'ArrowLeft') moveArtworkViewer(-1);
+    if (e.key === 'ArrowRight') moveArtworkViewer(1);
+    if (e.key === '+' || e.key === '=') zoomArtworkViewerAtCenter(1.25);
+    if (e.key === '-') zoomArtworkViewerAtCenter(0.8);
+    if (e.key === '0') resetArtworkTransform();
+  });
+}
+
+function openArtworkViewer(index) {
+  const viewer = document.getElementById('artworkViewer');
+  if (!viewer || !artworkViewerState.works.length) return;
+  artworkViewerState.index = index;
+  viewer.classList.add('is-open');
+  viewer.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('viewer-open');
+  document.documentElement.classList.add('viewer-open');
+  loadArtworkViewerImage();
+}
+
+function closeArtworkViewer() {
+  const viewer = document.getElementById('artworkViewer');
+  if (!viewer) return;
+  viewer.classList.remove('is-open');
+  viewer.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('viewer-open');
+  document.documentElement.classList.remove('viewer-open');
+  artworkViewerState.pointers.clear();
+  artworkViewerState.dragStart = null;
+  artworkViewerState.pinchStart = null;
+  resetArtworkTransform();
+}
+
+function moveArtworkViewer(delta) {
+  const len = artworkViewerState.works.length;
+  if (!len) return;
+  artworkViewerState.index = (artworkViewerState.index + delta + len) % len;
+  loadArtworkViewerImage();
+}
+
+function cacheBustArtworkUrl(url) {
+  if (!url) return url;
+  const joiner = url.indexOf('?') === -1 ? '?' : '&';
+  return url + joiner + 'v=hires-v5';
+}
+
+function loadArtworkViewerImage() {
+  const w = artworkViewerState.works[artworkViewerState.index];
+  if (!w) return;
+  const img = document.getElementById('artworkViewerImage');
+  const lang = getLang();
+  const title = lang === 'zh' ? w.title_zh : w.title_en;
+  const meta = lang === 'zh'
+    ? `吴训木 · ${w.medium_zh || ''} · ${w.dimensions_cm || ''} · ${w.year || ''}`
+    : `Xunmu Wu · ${w.medium_en || ''} · ${w.dimensions_cm || ''} · ${w.year || ''}`;
+  resetArtworkTransform();
+
+  const displaySrc = w.image || '';
+  const hiresSrc = w.hires_image || w.image || '';
+  img.dataset.displaySrc = displaySrc;
+  img.dataset.hiresSrc = hiresSrc;
+  img.dataset.activeSrc = hiresSrc;
+
+  const reset = document.getElementById('artworkViewerReset');
+  if (reset) reset.textContent = lang === 'zh' ? '\u9ad8\u6e05\u52a0\u8f7d\u4e2d' : 'Loading HD';
+
+  img.classList.add('is-loading-hires');
+  img.onload = function () {
+    img.classList.remove('is-loading-hires');
+    img.onload = null;
+    if (reset) reset.textContent = '100%';
+  };
+  img.onerror = function () {
+    img.classList.remove('is-loading-hires');
+    img.onerror = null;
+    img.src = cacheBustArtworkUrl(displaySrc);
+    img.dataset.activeSrc = displaySrc;
+    if (reset) reset.textContent = lang === 'zh' ? '\u666e\u901a\u56fe' : 'Standard image';
+  };
+
+  // Directly load the 6000px image. This avoids mobile browsers showing the web-display image.
+  img.src = cacheBustArtworkUrl(hiresSrc);
+
+  img.alt = lang === 'zh' ? (w.alt_zh || title) : (w.alt_en || title);
+  document.getElementById('artworkViewerNumber').textContent = w.catalog_number || String(artworkViewerState.index + 1).padStart(3, '0');
+  document.getElementById('artworkViewerTitle').textContent = title;
+  document.getElementById('artworkViewerMeta').textContent = meta;
+}
+
+function onArtworkPointerDown(e) {
+  e.preventDefault();
+  const stage = document.getElementById('artworkViewerStage');
+  stage.setPointerCapture(e.pointerId);
+  artworkViewerState.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+  if (artworkViewerState.pointers.size === 1) {
+    const now = Date.now();
+    const last = artworkViewerState.lastTap;
+    const distance = Math.hypot(e.clientX - last.x, e.clientY - last.y);
+    if (now - last.time < 320 && distance < 44) {
+      const targetScale = artworkViewerState.scale > 1.05 ? 1 : 3;
+      zoomArtworkViewerAt(e.clientX, e.clientY, targetScale);
+      artworkViewerState.lastTap = { time: 0, x: 0, y: 0 };
+      return;
+    }
+    artworkViewerState.lastTap = { time: now, x: e.clientX, y: e.clientY };
+    artworkViewerState.dragStart = {
+      x: e.clientX,
+      y: e.clientY,
+      baseX: artworkViewerState.x,
+      baseY: artworkViewerState.y
+    };
+  }
+
+  if (artworkViewerState.pointers.size === 2) {
+    const pts = Array.from(artworkViewerState.pointers.values());
+    artworkViewerState.pinchStart = {
+      dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y),
+      scale: artworkViewerState.scale
+    };
+    artworkViewerState.dragStart = null;
+  }
+}
+
+function onArtworkPointerMove(e) {
+  if (!artworkViewerState.pointers.has(e.pointerId)) return;
+  e.preventDefault();
+  artworkViewerState.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+  if (artworkViewerState.pointers.size === 2 && artworkViewerState.pinchStart) {
+    const pts = Array.from(artworkViewerState.pointers.values());
+    const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    const cx = (pts[0].x + pts[1].x) / 2;
+    const cy = (pts[0].y + pts[1].y) / 2;
+    const nextScale = artworkViewerState.pinchStart.scale * dist / artworkViewerState.pinchStart.dist;
+    zoomArtworkViewerAt(cx, cy, nextScale);
+    return;
+  }
+
+  if (artworkViewerState.pointers.size === 1 && artworkViewerState.dragStart && artworkViewerState.scale > 1.01) {
+    artworkViewerState.x = artworkViewerState.dragStart.baseX + (e.clientX - artworkViewerState.dragStart.x);
+    artworkViewerState.y = artworkViewerState.dragStart.baseY + (e.clientY - artworkViewerState.dragStart.y);
+    clampArtworkPan();
+    updateArtworkTransform();
+  }
+}
+
+function onArtworkPointerEnd(e) {
+  artworkViewerState.pointers.delete(e.pointerId);
+  if (artworkViewerState.pointers.size < 2) artworkViewerState.pinchStart = null;
+  if (artworkViewerState.pointers.size === 0) artworkViewerState.dragStart = null;
+}
+
+function zoomArtworkViewerAtCenter(factor) {
+  const stage = document.getElementById('artworkViewerStage');
+  const rect = stage.getBoundingClientRect();
+  zoomArtworkViewerAt(rect.left + rect.width / 2, rect.top + rect.height / 2, artworkViewerState.scale * factor);
+}
+
+function zoomArtworkViewerAt(clientX, clientY, nextScale) {
+  const stage = document.getElementById('artworkViewerStage');
+  const rect = stage.getBoundingClientRect();
+  const oldScale = artworkViewerState.scale || 1;
+  nextScale = Math.max(1, Math.min(6, nextScale));
+
+  const ox = clientX - rect.left - rect.width / 2;
+  const oy = clientY - rect.top - rect.height / 2;
+
+  artworkViewerState.x = ox - (ox - artworkViewerState.x) * (nextScale / oldScale);
+  artworkViewerState.y = oy - (oy - artworkViewerState.y) * (nextScale / oldScale);
+  artworkViewerState.scale = nextScale;
+
+  if (artworkViewerState.scale <= 1.01) {
+    artworkViewerState.scale = 1;
+    artworkViewerState.x = 0;
+    artworkViewerState.y = 0;
+  }
+  clampArtworkPan();
+  updateArtworkTransform();
+}
+
+function resetArtworkTransform() {
+  artworkViewerState.scale = 1;
+  artworkViewerState.x = 0;
+  artworkViewerState.y = 0;
+  updateArtworkTransform();
+}
+
+function clampArtworkPan() {
+  if (artworkViewerState.scale <= 1.01) {
+    artworkViewerState.x = 0;
+    artworkViewerState.y = 0;
+    return;
+  }
+  const stage = document.getElementById('artworkViewerStage');
+  const img = document.getElementById('artworkViewerImage');
+  if (!stage || !img) return;
+  const rect = stage.getBoundingClientRect();
+  const ratio = (img.naturalWidth || 1) / (img.naturalHeight || 1);
+  let fitW = rect.width;
+  let fitH = fitW / ratio;
+  if (fitH > rect.height) {
+    fitH = rect.height;
+    fitW = fitH * ratio;
+  }
+  const maxX = Math.max(0, (fitW * artworkViewerState.scale - rect.width) / 2);
+  const maxY = Math.max(0, (fitH * artworkViewerState.scale - rect.height) / 2);
+  artworkViewerState.x = Math.max(-maxX, Math.min(maxX, artworkViewerState.x));
+  artworkViewerState.y = Math.max(-maxY, Math.min(maxY, artworkViewerState.y));
+}
+
+function updateArtworkTransform() {
+  const img = document.getElementById('artworkViewerImage');
+  const reset = document.getElementById('artworkViewerReset');
+  if (!img) return;
+  img.style.transform = `translate3d(${artworkViewerState.x}px, ${artworkViewerState.y}px, 0) scale(${artworkViewerState.scale})`;
+  if (reset) reset.textContent = `${Math.round(artworkViewerState.scale * 100)}%`;
+}
+
+window.addEventListener('resize', () => {
+  const viewer = document.getElementById('artworkViewer');
+  if (viewer?.classList.contains('is-open')) {
+    clampArtworkPan();
+    updateArtworkTransform();
+  }
+});
 
 init();
