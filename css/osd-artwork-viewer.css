@@ -1,0 +1,177 @@
+/* OpenSeadragon direct-hires artwork viewer */
+html.xw-osd-open,
+body.xw-osd-open {
+  overflow: hidden !important;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+.xw-osd-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: none;
+  background: rgba(7,7,7,.97);
+  color: #f4f1ea;
+  font-family: "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+}
+
+.xw-osd-viewer.is-open {
+  display: block;
+}
+
+.xw-osd-canvas {
+  position: absolute;
+  inset: 0;
+  background: rgba(7,7,7,.97);
+}
+
+.xw-osd-back,
+.xw-osd-close,
+.xw-osd-nav,
+.xw-osd-controls button {
+  border: 1px solid rgba(255,255,255,.24);
+  background: rgba(0,0,0,.48);
+  color: #f4f1ea;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.xw-osd-back {
+  position: absolute;
+  z-index: 20;
+  top: 22px;
+  left: 24px;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 14px;
+  letter-spacing: .02em;
+}
+
+.xw-osd-close {
+  position: absolute;
+  z-index: 20;
+  top: 22px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 28px;
+  line-height: 38px;
+}
+
+.xw-osd-nav {
+  position: absolute;
+  z-index: 20;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 72px;
+  border-radius: 999px;
+  font-size: 44px;
+  line-height: 60px;
+}
+
+.xw-osd-prev { left: 22px; }
+.xw-osd-next { right: 22px; }
+
+.xw-osd-caption {
+  position: absolute;
+  left: 28px;
+  bottom: 28px;
+  z-index: 20;
+  max-width: min(760px, 68vw);
+  pointer-events: none;
+}
+
+.xw-osd-number {
+  font-size: 12px;
+  letter-spacing: .18em;
+  color: rgba(244,241,234,.62);
+  margin-bottom: 8px;
+}
+
+.xw-osd-title {
+  font-family: "Cormorant Garamond", "EB Garamond", Georgia, "Noto Serif SC", serif;
+  font-size: clamp(22px, 2.4vw, 36px);
+  line-height: 1.12;
+  font-weight: 300;
+}
+
+.xw-osd-meta {
+  margin-top: 8px;
+  font-size: 13px;
+  color: rgba(244,241,234,.70);
+}
+
+.xw-osd-status {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(244,241,234,.58);
+}
+
+.xw-osd-controls {
+  position: absolute;
+  z-index: 20;
+  right: 26px;
+  bottom: 28px;
+  display: flex;
+  gap: 8px;
+}
+
+.xw-osd-controls button {
+  min-width: 42px;
+  height: 36px;
+  padding: 0 13px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+#xwOsdZoomLabel {
+  min-width: 70px;
+}
+
+@media (max-width: 760px) {
+  .xw-osd-back {
+    top: max(14px, env(safe-area-inset-top));
+    left: max(14px, env(safe-area-inset-left));
+    padding: 10px 14px;
+    background: rgba(0,0,0,.62);
+  }
+
+  .xw-osd-nav {
+    display: none;
+  }
+
+  .xw-osd-close {
+    display: block;
+    top: max(14px, env(safe-area-inset-top));
+    right: max(14px, env(safe-area-inset-right));
+    width: 40px;
+    height: 40px;
+    font-size: 26px;
+    line-height: 36px;
+    background: rgba(0,0,0,.62);
+  }
+
+  .xw-osd-caption {
+    left: 16px;
+    right: 16px;
+    bottom: max(18px, env(safe-area-inset-bottom));
+    max-width: none;
+  }
+
+  .xw-osd-title {
+    font-size: 20px;
+  }
+
+  .xw-osd-meta {
+    font-size: 12px;
+  }
+
+  .xw-osd-controls {
+    right: 14px;
+    bottom: calc(max(18px, env(safe-area-inset-bottom)) + 84px);
+  }
+}

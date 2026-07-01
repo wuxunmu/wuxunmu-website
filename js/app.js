@@ -1,4 +1,4 @@
-const VIEWER_VERSION = 'direct-hires-raster-v7';
+const VIEWER_VERSION = 'direct-hires-v6';
 const I18N = {
   en: {
     brand: 'XUNMU WU', digital_archive: 'Digital Archive', footer_archive: 'XUNMU WU DIGITAL ARCHIVE',
@@ -9,6 +9,9 @@ const I18N = {
     solo: 'Solo Exhibitions', group: 'Group Exhibitions', fair: 'Art Fairs', complete_cv: 'Complete CV', complete_cv_note: 'Complete exhibition history, awards and art fair records will be available in the downloadable CV.', download_cv_soon: 'Download Complete CV · Coming Soon', read_full_statement: 'Read Full Statement →', back_to_artist: 'Back to The Artist →',
     texts_title: 'Literature', texts_lead: '', back_to_texts: 'Back to Literature →', writing_title: 'Writing', read_full_text: 'Read Full Text →', back_to_writing: 'Back to Writing →', contents: 'Contents', previous_chapter: 'Previous Chapter', next_chapter: 'Next Chapter', back_to_contents: 'Back to Contents', read: 'Read →',
     artworks_title: 'Artworks', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: 'Selected Works', selected_works_lead: '',
+    artwork_series_link: 'Thresholds of Time and Space', more_works_link: 'More Works',
+    artwork_series_intro: 'A nine-painting cycle exploring the evolution of life, civilization, and the spiritual dimensions of time and space.',
+    more_works_title: 'More Works', more_works_note: 'Additional works will be added to this section.',
     contact_title: 'Contact', studio_title: 'Studio', biography: 'Biography', timeline: 'Timeline', cv: 'CV', artist_statement: 'Artist Statement'
   },
   zh: {
@@ -19,7 +22,10 @@ const I18N = {
     artist_title: '艺术家', exhibitions_title: '展览', exhibitions_lead: '',
     solo: '个展', group: '群展', fair: '艺术博览会', complete_cv: '完整艺术履历', complete_cv_note: '完整展览履历、获奖与艺博会记录将收录于可下载的完整 CV。', download_cv_soon: '下载完整履历 · 即将提供', read_full_statement: '阅读全文 →', back_to_artist: '返回艺术家 →',
     texts_title: '文献', texts_lead: '', back_to_texts: '返回文献 →', writing_title: '写作', read_full_text: '阅读全文 →', back_to_writing: '返回写作 →', contents: '目录', previous_chapter: '上一章', next_chapter: '下一章', back_to_contents: '返回目录', read: '阅读 →',
-    artworks_title: '作品', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: '代表作品', selected_works_lead: '',
+    artworks_title: '\u4f5c\u54c1', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: '\u4ee3\u8868\u4f5c\u54c1', selected_works_lead: '',
+    artwork_series_link: '\u65f6\u7a7a\u96a7\u9053\u7cfb\u5217', more_works_link: '\u66f4\u591a\u4f5c\u54c1',
+    artwork_series_intro: '\u8fd9\u662f\u4e00\u7ec4\u7531\u4e5d\u5e45\u753b\u4f5c\u6784\u6210\u7684\u7cfb\u5217\u4f5c\u54c1\uff0c\u65e8\u5728\u63a2\u7d22\u751f\u547d\u4e0e\u6587\u660e\u7684\u6f14\u53d8\uff0c\u4ee5\u53ca\u65f6\u7a7a\u7684\u7cbe\u795e\u7ef4\u5ea6\u3002',
+    more_works_title: '\u66f4\u591a\u4f5c\u54c1', more_works_note: '\u66f4\u591a\u4f5c\u54c1\u5c06\u7ee7\u7eed\u6574\u7406\u5e76\u653e\u5165\u8fd9\u4e2a\u9875\u9762\u3002',
     contact_title: '联系', studio_title: '创作现场', biography: '简介', timeline: '时间轴', cv: '完整艺术履历', artist_statement: '艺术家自述'
   }
 };
@@ -561,7 +567,7 @@ function ensureArtworkViewer() {
   viewer.className = 'artwork-viewer';
   viewer.setAttribute('aria-hidden', 'true');
   viewer.innerHTML = `
-    <button type="button" class="artwork-viewer-back" id="artworkViewerBack" aria-label="Back to artworks">‹ 返回作品页面</button>
+    <button type="button" class="artwork-viewer-back" id="artworkViewerBack" aria-label="Back to artworks">\u2039 Back to artworks</button>
     <div class="artwork-viewer-stage" id="artworkViewerStage">
       <img id="artworkViewerImage" class="artwork-viewer-image" alt="">
     </div>
@@ -657,53 +663,39 @@ function cacheBustArtworkUrl(url) {
 function loadArtworkViewerImage() {
   const w = artworkViewerState.works[artworkViewerState.index];
   if (!w) return;
-
   const img = document.getElementById('artworkViewerImage');
-  const reset = document.getElementById('artworkViewerReset');
   const lang = getLang();
   const title = lang === 'zh' ? w.title_zh : w.title_en;
   const meta = lang === 'zh'
     ? `吴训木 · ${w.medium_zh || ''} · ${w.dimensions_cm || ''} · ${w.year || ''}`
     : `Xunmu Wu · ${w.medium_en || ''} · ${w.dimensions_cm || ''} · ${w.year || ''}`;
-
   resetArtworkTransform();
 
   const displaySrc = w.image || '';
   const hiresSrc = w.hires_image || w.image || '';
-  const bust = 'stable-hires-raster-20260701';
-  const joiner = hiresSrc.includes('?') ? '&' : '?';
-
   img.dataset.displaySrc = displaySrc;
   img.dataset.hiresSrc = hiresSrc;
   img.dataset.activeSrc = hiresSrc;
 
-  if (reset) reset.textContent = '高清加载中';
-  img.classList.add('is-loading-hires');
+  const reset = document.getElementById('artworkViewerReset');
+  if (reset) reset.textContent = lang === 'zh' ? '\u9ad8\u6e05\u52a0\u8f7d\u4e2d' : 'Loading HD';
 
+  img.classList.add('is-loading-hires');
   img.onload = function () {
     img.classList.remove('is-loading-hires');
     img.onload = null;
-    img.onerror = null;
-    img.dataset.loadedNatural = `${img.naturalWidth}×${img.naturalHeight}`;
-    updateArtworkTransform();
-    if (reset) reset.textContent = `100% · ${img.naturalWidth}px`;
-    // Keep the status visible briefly, then return to just percent after user zooms.
-    setTimeout(() => {
-      if (reset && artworkViewerState.scale === 1) reset.textContent = '100%';
-    }, 1800);
+    if (reset) reset.textContent = '100%';
   };
-
   img.onerror = function () {
     img.classList.remove('is-loading-hires');
-    img.onload = null;
     img.onerror = null;
+    img.src = cacheBustArtworkUrl(displaySrc);
     img.dataset.activeSrc = displaySrc;
-    if (reset) reset.textContent = '高清失败';
-    img.src = displaySrc ? (displaySrc + (displaySrc.includes('?') ? '&' : '?') + 'v=' + bust) : '';
+    if (reset) reset.textContent = lang === 'zh' ? '\u666e\u901a\u56fe' : 'Standard image';
   };
 
-  // Directly load the 6000px hires file. No 2200px display image is loaded in the viewer.
-  img.src = hiresSrc ? (hiresSrc + joiner + 'v=' + bust) : displaySrc;
+  // Directly load the 6000px image. This avoids mobile browsers showing the web-display image.
+  img.src = cacheBustArtworkUrl(hiresSrc);
 
   img.alt = lang === 'zh' ? (w.alt_zh || title) : (w.alt_en || title);
   document.getElementById('artworkViewerNumber').textContent = w.catalog_number || String(artworkViewerState.index + 1).padStart(3, '0');
@@ -785,13 +777,7 @@ function zoomArtworkViewerAt(clientX, clientY, nextScale) {
   const stage = document.getElementById('artworkViewerStage');
   const rect = stage.getBoundingClientRect();
   const oldScale = artworkViewerState.scale || 1;
-  const fit = getArtworkViewerFitSize();
-  const dpr = window.devicePixelRatio || 1;
-  const img = document.getElementById('artworkViewerImage');
-  const sourceScaleLimit = fit.width && img?.naturalWidth
-    ? Math.max(1, img.naturalWidth / (fit.width * dpr))
-    : 6;
-  nextScale = Math.max(1, Math.min(6, sourceScaleLimit, nextScale));
+  nextScale = Math.max(1, Math.min(6, nextScale));
 
   const ox = clientX - rect.left - rect.width / 2;
   const oy = clientY - rect.top - rect.height / 2;
@@ -816,24 +802,6 @@ function resetArtworkTransform() {
   updateArtworkTransform();
 }
 
-function getArtworkViewerFitSize() {
-  const stage = document.getElementById('artworkViewerStage');
-  const img = document.getElementById('artworkViewerImage');
-  if (!stage || !img) return { width: 0, height: 0 };
-
-  const rect = stage.getBoundingClientRect();
-  const ratio = (img.naturalWidth || 1) / (img.naturalHeight || 1);
-  let fitW = rect.width;
-  let fitH = fitW / ratio;
-
-  if (fitH > rect.height) {
-    fitH = rect.height;
-    fitW = fitH * ratio;
-  }
-
-  return { width: fitW, height: fitH };
-}
-
 function clampArtworkPan() {
   if (artworkViewerState.scale <= 1.01) {
     artworkViewerState.x = 0;
@@ -844,9 +812,15 @@ function clampArtworkPan() {
   const img = document.getElementById('artworkViewerImage');
   if (!stage || !img) return;
   const rect = stage.getBoundingClientRect();
-  const fit = getArtworkViewerFitSize();
-  const maxX = Math.max(0, (fit.width * artworkViewerState.scale - rect.width) / 2);
-  const maxY = Math.max(0, (fit.height * artworkViewerState.scale - rect.height) / 2);
+  const ratio = (img.naturalWidth || 1) / (img.naturalHeight || 1);
+  let fitW = rect.width;
+  let fitH = fitW / ratio;
+  if (fitH > rect.height) {
+    fitH = rect.height;
+    fitW = fitH * ratio;
+  }
+  const maxX = Math.max(0, (fitW * artworkViewerState.scale - rect.width) / 2);
+  const maxY = Math.max(0, (fitH * artworkViewerState.scale - rect.height) / 2);
   artworkViewerState.x = Math.max(-maxX, Math.min(maxX, artworkViewerState.x));
   artworkViewerState.y = Math.max(-maxY, Math.min(maxY, artworkViewerState.y));
 }
@@ -855,14 +829,7 @@ function updateArtworkTransform() {
   const img = document.getElementById('artworkViewerImage');
   const reset = document.getElementById('artworkViewerReset');
   if (!img) return;
-  const fit = getArtworkViewerFitSize();
-  if (fit.width && fit.height) {
-    img.style.width = `${fit.width * artworkViewerState.scale}px`;
-    img.style.height = `${fit.height * artworkViewerState.scale}px`;
-    img.style.maxWidth = 'none';
-    img.style.maxHeight = 'none';
-  }
-  img.style.transform = `translate3d(${artworkViewerState.x}px, ${artworkViewerState.y}px, 0)`;
+  img.style.transform = `translate3d(${artworkViewerState.x}px, ${artworkViewerState.y}px, 0) scale(${artworkViewerState.scale})`;
   if (reset) reset.textContent = `${Math.round(artworkViewerState.scale * 100)}%`;
 }
 

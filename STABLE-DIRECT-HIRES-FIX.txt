@@ -1,5 +1,0 @@
-This version is based on wuxunmu-website-main (6).zip and only changes the image viewer loader.
-
-It fixes the blank-page issue by preserving the original app.js structure.
-Viewer now directly loads /images/artworks/hires/*-hires.jpg.
-When loaded, the zoom label briefly shows "100% · 6000px" so you can confirm hires is active.
