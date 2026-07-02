@@ -1,4 +1,4 @@
-const VIEWER_VERSION = 'direct-hires-v10';
+const VIEWER_VERSION = 'direct-hires-v11';
 const I18N = {
   en: {
     brand: 'XUNMU WU', digital_archive: 'Digital Archive', footer_archive: 'XUNMU WU DIGITAL ARCHIVE',
