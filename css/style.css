@@ -811,3 +811,81 @@ html.viewer-open, body.viewer-open { overflow: hidden !important; overscroll-beh
     max-height: 78vh !important;
   }
 }
+
+/* 2026-07-02 artwork navigation and More Works CTA refinement */
+.artworks-section-links{
+  align-items:flex-start;
+}
+.artworks-section-links a{
+  display:inline-block;
+  width:max-content;
+  max-width:100%;
+}
+.artworks-more-cta{
+  width:min(100%,var(--max));
+  max-width:var(--max);
+  margin:0 auto;
+  padding:56px var(--side) 104px;
+  border-top:1px solid var(--line);
+  text-align:center;
+}
+.artworks-more-cta a{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:clamp(18px,3vw,42px);
+  width:auto;
+  min-width:min(420px,72vw);
+  justify-content:space-between;
+  padding:16px 0 18px;
+  border-bottom:1px solid currentColor;
+  font-family:"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;
+  font-size:clamp(15px,1.15vw,18px);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  transition:color .24s ease;
+}
+.artworks-more-cta a::after{
+  content:"\2192";
+  display:inline-block;
+  font-size:1.35em;
+  line-height:1;
+  transform:translateX(0);
+  animation:moreWorksArrow 1.45s ease-in-out infinite;
+}
+.artworks-more-cta a:hover{
+  color:var(--ink);
+}
+.artworks-more-cta a:hover::after{
+  animation-play-state:paused;
+  transform:translateX(7px);
+}
+body.zh .artworks-more-cta a{
+  text-transform:none;
+  letter-spacing:.12em;
+}
+@keyframes moreWorksArrow{
+  0%,100%{transform:translateX(0);opacity:.62;}
+  50%{transform:translateX(8px);opacity:1;}
+}
+@media(max-width:640px){
+  .artworks-section-links{
+    align-items:flex-start;
+  }
+  .artworks-section-links a{
+    width:max-content;
+    max-width:100%;
+  }
+  .artworks-more-cta{
+    padding:48px var(--side) 86px;
+  }
+  .artworks-more-cta a{
+    min-width:min(300px,72vw);
+    font-size:16px;
+    letter-spacing:.1em;
+  }
+  body.zh .artworks-more-cta a{
+    letter-spacing:.1em;
+  }
+}
