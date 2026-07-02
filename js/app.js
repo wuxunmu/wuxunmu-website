@@ -1,4 +1,4 @@
-const VIEWER_VERSION = 'direct-hires-v9';
+const VIEWER_VERSION = 'direct-hires-v10';
 const I18N = {
   en: {
     brand: 'XUNMU WU', digital_archive: 'Digital Archive', footer_archive: 'XUNMU WU DIGITAL ARCHIVE',
@@ -10,7 +10,6 @@ const I18N = {
     texts_title: 'Literature', texts_lead: '', back_to_texts: 'Back to Literature →', writing_title: 'Writing', read_full_text: 'Read Full Text →', back_to_writing: 'Back to Writing →', contents: 'Contents', previous_chapter: 'Previous Chapter', next_chapter: 'Next Chapter', back_to_contents: 'Back to Contents', read: 'Read →',
     artworks_title: 'Artworks', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: 'Selected Works', selected_works_lead: '',
     artwork_series_link: 'Thresholds of Time and Space', more_works_link: 'More Works',
-    current_series_label: 'Current Series',
     artwork_series_intro: 'Thresholds of Time and Space is a nine-painting cycle exploring the evolution of life, civilization, and the spiritual dimensions of time and space.',
     more_works_title: 'More Works', more_works_note: 'Additional works will be added to this section.',
     contact_title: 'Contact', studio_title: 'Studio', biography: 'Biography', timeline: 'Timeline', cv: 'CV', artist_statement: 'Artist Statement'
@@ -25,7 +24,6 @@ const I18N = {
     texts_title: '文献', texts_lead: '', back_to_texts: '返回文献 →', writing_title: '写作', read_full_text: '阅读全文 →', back_to_writing: '返回写作 →', contents: '目录', previous_chapter: '上一章', next_chapter: '下一章', back_to_contents: '返回目录', read: '阅读 →',
     artworks_title: '\u4f5c\u54c1', artworks_lead: '', selected_works_eyebrow: '', selected_works_title: '\u4ee3\u8868\u4f5c\u54c1', selected_works_lead: '',
     artwork_series_link: '\u65f6\u7a7a\u96a7\u9053\u7cfb\u5217', more_works_link: '\u66f4\u591a\u4f5c\u54c1',
-    current_series_label: '\u5f53\u524d\u7cfb\u5217',
     artwork_series_intro: '\u65f6\u7a7a\u96a7\u9053\u7cfb\u5217\u662f\u4e00\u7ec4\u7531\u4e5d\u5e45\u753b\u4f5c\u6784\u6210\u7684\u7cfb\u5217\u4f5c\u54c1\uff0c\u65e8\u5728\u63a2\u7d22\u751f\u547d\u4e0e\u6587\u660e\u7684\u6f14\u53d8\uff0c\u4ee5\u53ca\u65f6\u7a7a\u7684\u7cbe\u795e\u7ef4\u5ea6\u3002',
     more_works_title: '\u66f4\u591a\u4f5c\u54c1', more_works_note: '\u66f4\u591a\u4f5c\u54c1\u5c06\u7ee7\u7eed\u6574\u7406\u5e76\u653e\u5165\u8fd9\u4e2a\u9875\u9762\u3002',
     contact_title: '联系', studio_title: '创作现场', biography: '简介', timeline: '时间轴', cv: '完整艺术履历', artist_statement: '艺术家自述'
